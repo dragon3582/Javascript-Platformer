@@ -1,0 +1,151 @@
+.background{
+	background: url(clouds.jpeg);
+	background-size: 100% 100%;
+    table-layout: fixed;
+    border-spacing: 0;   
+}
+
+.background td {
+	padding: 0;
+}
+
+.lava {
+	background: url(lavas.gif); 
+}
+
+.wall{
+	background: url(walls.jpg);
+}
+
+.lost .player {
+	background: rgb(160, 64, 64);
+	box-shadow: inset 0px -25px 10px -10px rgb(160, 64 ,69);
+
+}
+
+
+.won .player{	
+	
+	
+	box-shadow: inset  0px  2px 5px gold, inset 0px  2px 5px gold, 0px  2px 5px gold, 0px  2px 5px gold,;
+	border-radius: 25px;
+	
+}
+
+.leftRun .player{
+	background: url(sayakaRunAnim.gif);
+	background-repeat: no-repeat;
+	background-position: -3px 3px;
+	transform: rotateY(180deg);
+	padding-right:20px;
+}
+
+.run .player { 	
+	background: url(sayakaRunAnim.gif);
+	background-repeat: no-repeat;
+	background-position: -3px 3px;
+	padding-right: 20px;
+
+}
+.air .player {
+	background: url(sayakaAir.gif);
+	background-repeat: no-repeat;
+	background-position: -3px 3px;
+	padding-left: 20px;
+}
+
+.leftAir .player{
+	background: url(sayakaAir.gif);
+	background-repeat: no-repeat;
+	transform: rotateY(180deg);
+	background-position: -3px 3px;
+	padding-right: 20px;
+}
+
+.actor {
+	position: absolute;  
+}
+
+.idle .player { 
+	background: url(sayakaIdle.gif); 
+	background-repeat: no-repeat;
+	background-position: -3px 3px;
+	padding-right: 20px;
+	
+}
+.coin {
+	background: url(energyBall.gif); 
+	padding: 4px;
+	background-repeat: no-repeat;
+}
+
+.pickUp {
+	background-color: red;
+	}
+	/*
+    -webkit-animation-name: rotate; 
+    -webkit-animation-duration: 2s; 
+    -webkit-animation-iteration-count: infinite;
+    -webkit-animation-timing-function: linear;
+    -moz-animation-name: rotate; 
+    -moz-animation-duration: 2s; 
+    -moz-animation-iteration-count: infinite;
+    -moz-animation-timing-function: linear;
+	-ms-animation-name: rotate; 
+    -ms-animation-duration: 2s; 
+    -ms-animation-iteration-count: infinite;
+    -ms-animation-timing-function: linear;
+    animation-name: rotate; 
+    animation-duration: 2s; 
+    animation-iteration-count: infinite;
+    animation-timing-function: linear;
+	
+	-webkit-animation: rotate 5s infinite linear;
+	animation: rotate 5s infinite linear;
+	
+}
+
+@-ms-keyframes rotate {
+    from {-ms-transform: rotate(0deg);}
+    to {-ms-transform: rotate(360deg);}
+}
+
+@-webkit-keyframes rotate {
+    from {-webkit-transform: rotate(0deg);}
+    to {-webkit-transform: rotate(360deg);}
+}
+
+@-moz-keyframes rotate {
+    from {-moz-transform: rotate(0deg);}
+    to {-moz-transform: rotate(360deg);}
+}
+
+@keyframes rotate {
+    from {transform: rotate(0deg);}
+    to {transform: rotate(360deg);}
+}
+
+
+.pickUp {
+	background-color: red;
+	-webkit-animation-name: spin;
+	-webkit-animation-duration: 3s;
+	-webkit-animation-iteration-count: infinite;
+	-webkit-animation-timing-function: linear;
+
+}
+
+@-webkit-keyframes spin {
+	
+	from: {-webkit-transform:rotate(0deg);}
+	to: {-webkit-transform:rotate(359deg);}
+	
+}
+*/
+
+.game {
+	overflow: hidden;
+	max-width: 600px;
+	max-height: 450px;
+	position: relative;
+}
