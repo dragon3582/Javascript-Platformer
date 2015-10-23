@@ -7,6 +7,7 @@ var actorChars = {
 	
 };
 
+  
 if (!window.requestAnimationFrame)  
 { 
 	window.requestAnimationFrame = (function()  
@@ -23,7 +24,7 @@ if (!window.requestAnimationFrame)
 } 
 
 
-
+  
 function Level(plan) {
 	
 	this.width = plan[0].length;
@@ -111,9 +112,10 @@ function Coin(pos) {
 Coin.prototype.type = "coin"; 
 
 function PickUp(pos) { 
-   this.basePos = this.pos = pos.plus(new Vector(0.2, 0.1)); 
-   this.size = new Vector(0.4, 0.4); 
-   // Make it go back and forth in a sine wave.  
+	
+	this.basePos = this.pos = pos.plus(new Vector(0.2, 0.1)); 
+	this.size = new Vector(0.7, 0.7); 
+	this.wobble = Math.random() * Math.PI * 5;
 } 
 PickUp.prototype.type = "pickUp"; 
 
@@ -329,20 +331,10 @@ Coin.prototype.act = function(step) {
 }; 
 
 PickUp.prototype.act = function(step) {
-/*
-	var degree = 0;
-	var elem = document.getElementsByClassName('pickUp');
-	
-	if(navigator.userAgent.match("Firefox"))
-		elem.style.WebkitTransform = "rotate(" + degree +"deg)";
-	else
-		elem.style.transform = "rotate(" + degree +"deg)";
-		
-	degree++
-	
-	if(degree > 359)
-		degree = 0;
-		*/
+
+	this.wobble += step * wobbleSpeed; 
+	var wobblePos = Math.sin(this.wobble) * wobbleDist; 
+	this.pos = this.basePos.plus(new Vector(wobblePos, 0)); 
 }; 
 
 var maxStep = 0.05;
@@ -432,14 +424,13 @@ Player.prototype.act = function(step, level, keys) {
 	}
 }; 
  
- 
 Level.prototype.playerTouched = function(type, actor) {
 	
 	
 	if(type == 'lava' && this.status == null)
 	{
 		this.status = 'lost';
-		this.finishDelay = 1;
+		this.finishDelay = 1.5;
 	}
 	
 	else if(type == 'coin')
@@ -452,8 +443,23 @@ Level.prototype.playerTouched = function(type, actor) {
 			return actor.type == 'coin';
 		})) {
 			this.status = 'won ';
-			this.finishDelay = 1;
+			this.finishDelay = 1.5;
 		}
+	}
+	
+	else if(type == 'pickUp')
+	{
+		this.actors = this.actors.filter(function(other) {
+			return other != actor; 
+		});
+		
+		gravity = 5;
+		console.log(gravity);
+		setTimeout(function() {
+			gravity = 25;
+		}, 5000);
+		
+		
 	}
 };
 

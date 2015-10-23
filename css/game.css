@@ -10,7 +10,8 @@
 }
 
 .lava {
-	background: url(lavas.gif); 
+	background: url(lavaStuff.jpg);
+	background-size: 55px 55px;
 }
 
 .wall{
@@ -35,7 +36,7 @@
 .leftRun .player{
 	background: url(sayakaRunAnim.gif);
 	background-repeat: no-repeat;
-	background-position: -3px 3px;
+	background-position: 15px 3px;
 	transform: rotateY(180deg);
 	padding-right:20px;
 }
@@ -58,7 +59,7 @@
 	background: url(sayakaAir.gif);
 	background-repeat: no-repeat;
 	transform: rotateY(180deg);
-	background-position: -3px 3px;
+	background-position: 15px 3px;
 	padding-right: 20px;
 }
 
@@ -80,68 +81,11 @@
 }
 
 .pickUp {
-	background-color: red;
+	background: url(gravLow.png);
+	background-size: 25px 25px;
+	
 	}
-	/*
-    -webkit-animation-name: rotate; 
-    -webkit-animation-duration: 2s; 
-    -webkit-animation-iteration-count: infinite;
-    -webkit-animation-timing-function: linear;
-    -moz-animation-name: rotate; 
-    -moz-animation-duration: 2s; 
-    -moz-animation-iteration-count: infinite;
-    -moz-animation-timing-function: linear;
-	-ms-animation-name: rotate; 
-    -ms-animation-duration: 2s; 
-    -ms-animation-iteration-count: infinite;
-    -ms-animation-timing-function: linear;
-    animation-name: rotate; 
-    animation-duration: 2s; 
-    animation-iteration-count: infinite;
-    animation-timing-function: linear;
-	
-	-webkit-animation: rotate 5s infinite linear;
-	animation: rotate 5s infinite linear;
-	
-}
 
-@-ms-keyframes rotate {
-    from {-ms-transform: rotate(0deg);}
-    to {-ms-transform: rotate(360deg);}
-}
-
-@-webkit-keyframes rotate {
-    from {-webkit-transform: rotate(0deg);}
-    to {-webkit-transform: rotate(360deg);}
-}
-
-@-moz-keyframes rotate {
-    from {-moz-transform: rotate(0deg);}
-    to {-moz-transform: rotate(360deg);}
-}
-
-@keyframes rotate {
-    from {transform: rotate(0deg);}
-    to {transform: rotate(360deg);}
-}
-
-
-.pickUp {
-	background-color: red;
-	-webkit-animation-name: spin;
-	-webkit-animation-duration: 3s;
-	-webkit-animation-iteration-count: infinite;
-	-webkit-animation-timing-function: linear;
-
-}
-
-@-webkit-keyframes spin {
-	
-	from: {-webkit-transform:rotate(0deg);}
-	to: {-webkit-transform:rotate(359deg);}
-	
-}
-*/
 
 .game {
 	overflow: hidden;
