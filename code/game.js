@@ -10,7 +10,8 @@ var actorChars = {
 	'c': EnergyTut,
 	'l': LavaTut,
 	'w': BeginGame,
-	'b': Bounce
+	'b': Bounce,
+	'm': Patience
 	
 };
 
@@ -112,7 +113,7 @@ Player.prototype.type = "player";
 
 function Coin(pos) { 
    this.basePos = this.pos = pos.plus(new Vector(0.2, 0.1)); 
-   this.size = new Vector(0.6, 0.6); 
+   this.size = new Vector(0.4, 0.4); 
    this.wobble = Math.random() * Math.PI * 2; 
 } 
 Coin.prototype.type = "coin"; 
@@ -152,7 +153,7 @@ function Wall2(pos, ch){
 	this.pos = pos;
 	this.size = new Vector(1.5, .5);
 	if(ch == '>')
-		this.speed = new Vector(2, 0);
+		this.speed = new Vector(2.5, 0);
 
 }
 Wall2.prototype.type = 'wall2';
@@ -199,6 +200,13 @@ function Bounce(pos, ch) {
 	this.size = new Vector(6, 3.5);
 }
 Bounce.prototype.type = 'bounce';
+
+function Patience(pos, ch) {
+
+	this.pos = pos;
+	this.size = new Vector(4.5,1.4);
+}
+Patience.prototype.type = 'timing';
 
 // Helper function to easily create an element of a type provided 
 // and assign it a class.
@@ -431,6 +439,10 @@ Bounce.prototype.act = function(step) {
 
 };
 
+Patience.prototype.act = function(step) {
+
+};
+
 var maxStep = 0.05;
 
 var playerXSpeed = 8;
@@ -651,8 +663,16 @@ function runGame(plans, Display) {
 			startLevel(n + 1);
 		else
 		{
-			console.log('YOU WIN');
-			status = 'youWin';
+			
+			setTimeout(function(){
+				var winState = elt('div', 'backWin');
+				winState.style.height = '700px';
+				winState.style.width = '1000px';
+				winState
+				document.body.appendChild(winState);
+				console.log('nice job.');
+			}, 700);
+
 		}	
 	
 	});
