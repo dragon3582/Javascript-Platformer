@@ -3,7 +3,14 @@ var actorChars = {
 	'@': Player,
 	'o': Coin,
 	'=': Lava, '|': Lava, 'v': Lava,
-	'p': PickUp
+	'>': Wall2,
+	'p': PickUp,
+	't': ArrowTut,
+	'g': GravTut,
+	'c': EnergyTut,
+	'l': LavaTut,
+	'w': BeginGame,
+	'b': Bounce
 	
 };
 
@@ -106,7 +113,6 @@ Player.prototype.type = "player";
 function Coin(pos) { 
    this.basePos = this.pos = pos.plus(new Vector(0.2, 0.1)); 
    this.size = new Vector(0.6, 0.6); 
-   // Make it go back and forth in a sine wave. 
    this.wobble = Math.random() * Math.PI * 2; 
 } 
 Coin.prototype.type = "coin"; 
@@ -141,6 +147,58 @@ function Lava(pos, ch){
 
 Lava.prototype.type = 'lava';
 
+function Wall2(pos, ch){
+
+	this.pos = pos;
+	this.size = new Vector(1.5, .5);
+	if(ch == '>')
+		this.speed = new Vector(2, 0);
+
+}
+Wall2.prototype.type = 'wall2';
+
+
+function ArrowTut(pos, ch) {
+
+	this.pos = pos;
+	this.size = new Vector(5, 3.5);
+}
+ArrowTut.prototype.type = 'arrowTut';
+
+function GravTut(pos, ch) {
+
+	this.pos = pos;
+	this.size = new Vector(6, 3.5);
+}
+GravTut.prototype.type = 'gravTut';
+
+function EnergyTut(pos, ch) {
+
+	this.pos = pos;
+	this.size = new Vector(6, 3.5);
+}
+EnergyTut.prototype.type = 'energyTut';
+
+function LavaTut(pos, ch) {
+
+	this.pos = pos;
+	this.size = new Vector(6, 3.5);
+}
+LavaTut.prototype.type = 'lavaTut';
+
+function BeginGame(pos, ch) {
+
+	this.pos = pos;
+	this.size = new Vector(6, 3.5);
+}
+BeginGame.prototype.type = 'beginGame';
+
+function Bounce(pos, ch) {
+
+	this.pos = pos;
+	this.size = new Vector(6, 3.5);
+}
+Bounce.prototype.type = 'bounce';
 
 // Helper function to easily create an element of a type provided 
 // and assign it a class.
@@ -263,6 +321,7 @@ Level.prototype.obstacleAt = function(pos, size)
 			
 			if(fieldType)
 			{
+				//console.log(fieldType);
 				return fieldType;
 			}
 		}
@@ -319,6 +378,17 @@ Lava.prototype.act = function(step, level)
 		this.speed = this.speed.times(-1);
 };
 
+Wall2.prototype.act = function(step, level)
+{
+	var newPos = this.pos.plus(this.speed.times(step));
+	
+	if(!level.obstacleAt(newPos, this.size))
+		this.pos = newPos;
+	else
+		this.speed = this.speed.times(-1);
+		
+};
+
 var maxStep = 0.05;
 
 var wobbleSpeed = 8, wobbleDist = 0.07; 
@@ -336,6 +406,30 @@ PickUp.prototype.act = function(step) {
 	var wobblePos = Math.sin(this.wobble) * wobbleDist; 
 	this.pos = this.basePos.plus(new Vector(wobblePos, 0)); 
 }; 
+
+ArrowTut.prototype.act = function(step) {
+
+};
+
+GravTut.prototype.act = function(step) {
+
+};
+
+EnergyTut.prototype.act = function(step) {
+
+};
+
+LavaTut.prototype.act = function(step) {
+
+};
+
+BeginGame.prototype.act = function(step) {
+
+};
+
+Bounce.prototype.act = function(step) {
+
+};
 
 var maxStep = 0.05;
 
@@ -361,11 +455,13 @@ Player.prototype.moveX = function(step, level, keys) {
 	var newPos = this.pos.plus(motion);
   
 	var obstacle = level.obstacleAt(newPos, this.size);
-  
+	var otherWall = level.actorAt(this);
+	
 	if(obstacle)
 		level.playerTouched(obstacle);
 	else
 		this.pos = newPos;
+		
   
 };
 
@@ -380,13 +476,15 @@ Player.prototype.moveY = function(step, level, keys) {
 	var newPos = this.pos.plus(motion);
 
 	var obstacle = level.obstacleAt(newPos, this.size);
-	
+	var otherWall = level.actorAt(this);
 	
 	if(obstacle)
 	{
 		level.playerTouched(obstacle);
 		if(keys.up && this.speed.y > 0)
+		{
 			this.speed.y = -jumpSpeed;
+		}
 		else
 			this.speed.y = 0;
 					
@@ -394,6 +492,14 @@ Player.prototype.moveY = function(step, level, keys) {
 	else
 	{
 		this.pos = newPos;
+	}
+	
+	if(otherWall)
+	{
+		if(otherWall.type == 'wall2') 
+		{
+			this.speed.y += -jumpSpeed/2;
+		}
 	}
 	
 	if(keys.right && this.speed.y > 0 || this.speed.y < 0)
@@ -454,13 +560,13 @@ Level.prototype.playerTouched = function(type, actor) {
 		});
 		
 		gravity = 5;
-		console.log(gravity);
 		setTimeout(function() {
 			gravity = 25;
 		}, 5000);
 		
-		
 	}
+	
+	
 };
 
 
@@ -544,9 +650,13 @@ function runGame(plans, Display) {
 		else if(n < plans.length - 1)
 			startLevel(n + 1);
 		else
-			console.log('You win!');
+		{
+			console.log('YOU WIN');
+			status = 'youWin';
+		}	
 	
 	});
   }
   startLevel(0);
 }
+

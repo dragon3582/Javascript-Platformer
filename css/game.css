@@ -9,6 +9,30 @@
 	padding: 0;
 }
 
+.arrowTut {
+	background: url(arrows.png);
+}
+
+.gravTut {
+	background: url(lowGrav.png);
+}
+
+.energyTut {
+	background: url(energyOrbs.png);
+}
+
+.lavaTut {
+	background: url(thisLava.png);
+}
+
+.beginGame {
+	background: url(beginGame.png);
+}
+
+.bounce {
+	background: url(bouncePlat.png);
+}
+
 .lava {
 	background: url(lavaStuff.jpg);
 	background-size: 55px 55px;
@@ -18,19 +42,28 @@
 	background: url(walls.jpg);
 }
 
+.wall2{
+	background: url(walls.jpg);
+	box-shadow: inset 0px -15px 25px -10px rgb(0, 184 , 230);
+}
+
 .lost .player {
 	background: rgb(160, 64, 64);
 	box-shadow: inset 0px -25px 10px -10px rgb(160, 64 ,69);
 
 }
 
-
 .won .player{	
-	
 	
 	box-shadow: inset  0px  2px 5px gold, inset 0px  2px 5px gold, 0px  2px 5px gold, 0px  2px 5px gold,;
 	border-radius: 25px;
 	
+}
+
+.youWin .player{
+	background: url(youWinTheGame.gif);
+	background-size: 700px 500px;
+	background-position: center;
 }
 
 .leftRun .player{
