@@ -1,3 +1,5 @@
+
+//here is all the actors to be in the game area at any time through the game. some are tooltips, others are obstacles
 var actorChars = {
 
 	'@': Player,
@@ -15,7 +17,7 @@ var actorChars = {
 	
 };
 
-  
+
 if (!window.requestAnimationFrame)  
 { 
 	window.requestAnimationFrame = (function()  
@@ -36,42 +38,43 @@ if (!window.requestAnimationFrame)
 function Level(plan) {
 	
 	this.width = plan[0].length;
-	// Use the number of rows to set the height
+	//use the number of rows to set the height
 
 	this.height = plan.length;
 
-	// Store the individual tiles in our own, separate array
+	//store the individual tiles in our own, separate array
 	this.grid = [];
 	this.playerStatus = 'idle';
   
 	this.actors = [];
 
-	//Loop through each row in the plan, creating an array in our grid
+	//loop through each row in the plan, creating an array in our grid
 	for (var y = 0; y < this.height; y++) {
 		var line = plan[y], gridLine = [];
 
-		// Loop through each array element in the inner array for the type of the tile
+		//loop through each array element in the inner array for the type of the tile
 		for (var x = 0; x < this.width; x++) {
-		// Get the type from that character in the string. It can be 'x', '!' or ' '
-		// If the character is ' ', assign null.
+		//get the type from that character in the string. It can be 'x', '!' or ' '
+		//if the character is ' ', assign null.
 
 			var ch = line[x], fieldType = null;
 			var Actor = actorChars[ch];
-		// Use if and else to handle the three cases
+			
+			//use if and else to handle the three cases
 			if (Actor)
 			{
 				this.actors.push(new Actor(new Vector (x,y), ch));
 			}
 			else if (ch == "x")
 				fieldType = "wall";
-			// Because there is a third case (space ' '), use an "else if" instead of "else"
+			
 			else if (ch == "!")
 				fieldType = "lava";
 
-			// "Push" the fieldType, which is a string, onto the gridLine array (at the end).
+			// "Push" the fieldType, which is a string, onto the gridLine array (at the end)
 			gridLine.push(fieldType);
 		}
-		// Push the entire row onto the array of rows.
+		//push the entire row onto the array of rows
 		this.grid.push(gridLine);
 	}
 
@@ -88,22 +91,23 @@ Level.prototype.isFinished = function(){
 
 };
 
+//function to help set some hitboxes
 function Vector(x, y) {
 	this.x = x; this.y = y;
 }
 
-// Vector arithmetic: v_1 + v_2 = <a,b>+<c,d> = <a+c,b+d>
+//vector arithmetic: v_1 + v_2 = <a,b>+<c,d> = <a+c,b+d>
 Vector.prototype.plus = function(other) {
 	return new Vector(this.x + other.x, this.y + other.y);
 };
 
-// Vector arithmetic: v_1 * factor = <a,b>*factor = <a*factor,b*factor>
+//vector arithmetic: v_1 * factor = <a,b>*factor = <a*factor,b*factor>
 Vector.prototype.times = function(factor) {
 	return new Vector(this.x * factor, this.y * factor);
 };
 
 
-// A Player has a size, speed and position.
+//a Player has a size, speed and position.
 function Player(pos) {
 	this.pos = pos.plus(new Vector(0, -1.5));
 	this.size = new Vector(1.3, 1.7);
@@ -111,6 +115,7 @@ function Player(pos) {
 }
 Player.prototype.type = "player";
 
+//also the collectiable 'coin' has a wobble feature to it
 function Coin(pos) { 
    this.basePos = this.pos = pos.plus(new Vector(0.2, 0.1)); 
    this.size = new Vector(0.4, 0.4); 
@@ -118,6 +123,7 @@ function Coin(pos) {
 } 
 Coin.prototype.type = "coin"; 
 
+//the pickup has similar attributes, just defined differently later on
 function PickUp(pos) { 
 	
 	this.basePos = this.pos = pos.plus(new Vector(0.2, 0.1)); 
@@ -126,6 +132,7 @@ function PickUp(pos) {
 } 
 PickUp.prototype.type = "pickUp"; 
 
+//this is the stuff that kills you. the lava. has a position size, and speed for certain other lava pieces
 function Lava(pos, ch){
 	
 	this.pos = pos;
@@ -148,6 +155,7 @@ function Lava(pos, ch){
 
 Lava.prototype.type = 'lava';
 
+//here's my bouncing wall. has its position, size, and speed
 function Wall2(pos, ch){
 
 	this.pos = pos;
@@ -158,7 +166,7 @@ function Wall2(pos, ch){
 }
 Wall2.prototype.type = 'wall2';
 
-
+//most of these functions are just defining the sizes of the tooltips that are around the beginning. only a position and size
 function ArrowTut(pos, ch) {
 
 	this.pos = pos;
@@ -208,39 +216,41 @@ function Patience(pos, ch) {
 }
 Patience.prototype.type = 'timing';
 
-// Helper function to easily create an element of a type provided 
-// and assign it a class.
+
+//helper function to easily create an element of a type provided 
+//and assign it a class.
 function elt(name, className) {
 	var elt = document.createElement(name);
 	if (className) elt.className = className;
 	return elt;
 }
 
-// Main display class. We keep track of the scroll window using it.
+//main display class. keeps track of the scroll window using it.
 function DOMDisplay(parent, level) {
 
-// this.wrap corresponds to a div created with class of "game"
+//this.wrap corresponds to a div created with class of "game"
 	this.wrap = parent.appendChild(elt("div", "game"));
 	this.level = level;
 
-	// In this version, we only have a static background.
 	this.wrap.appendChild(this.drawBackground());
 
-	// Keep track of actors
+	//keeps track of actors
 	this.actorLayer = null;
 
-	// Update the world based on player position
+	//update the world based on player position
 	this.drawFrame();
 }
 
+//scale of the game itself
 var scale = 30;
 
-DOMDisplay.prototype.drawBackground = function() {
-  var table = elt("table", "background");
-  table.style.width = this.level.width * scale + "px";
 
-  // Assign a class to new row element directly from the string from
-  // each tile in grid
+DOMDisplay.prototype.drawBackground = function() {
+	var table = elt("table", "background");
+	table.style.width = this.level.width * scale + "px";
+
+	//assign a class to new row element directly from the string from
+	//each tile in grid
 	this.level.grid.forEach(function(row) {
 		var rowElt = table.appendChild(elt("tr"));
 		rowElt.style.height = scale + "px";
@@ -251,9 +261,10 @@ DOMDisplay.prototype.drawBackground = function() {
 	return table;
 };
 
-// Draw the player agent
+//drawing the player agent
 DOMDisplay.prototype.drawActors = function() {
-  // Create a new container div for actor dom elements
+	
+	//create a new container div for actor dom elements
 	var wrap = elt('div');
 
 	this.level.actors.forEach(function (actor){
@@ -279,15 +290,14 @@ DOMDisplay.prototype.scrollPlayerIntoView = function() {
 	var width = this.wrap.clientWidth;
 	var height = this.wrap.clientHeight;
 
-	// We want to keep player at least 1/3 away from side of screen
+	//want to keep player at least 1/3 away from side of screen
 	var margin = width / 3;
 
-	// The viewport
 	var left = this.wrap.scrollLeft, right = left + width;
 	var top = this.wrap.scrollTop, bottom = top + height;
 
 	var player = this.level.player;
-	// Change coordinates from the source to our scaled.
+	//change coordinates from the source to our scaled.
 	var center = player.pos.plus(player.size.times(0.5))
 				 .times(scale);
 
