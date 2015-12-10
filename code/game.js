@@ -1,5 +1,6 @@
 
 //here is all the actors to be in the game area at any time through the game. some are tooltips, others are obstacles
+//references to the characters in the gameLevels code
 var actorChars = {
 
 	'@': Player,
@@ -17,7 +18,7 @@ var actorChars = {
 	
 };
 
-
+/*
 if (!window.requestAnimationFrame)  
 { 
 	window.requestAnimationFrame = (function()  
@@ -32,7 +33,7 @@ if (!window.requestAnimationFrame)
 		}; 
 	})(); 
 } 
-
+*/
 
   
 function Level(plan) {
@@ -54,13 +55,10 @@ function Level(plan) {
 
 		//loop through each array element in the inner array for the type of the tile
 		for (var x = 0; x < this.width; x++) {
-		//get the type from that character in the string. It can be 'x', '!' or ' '
-		//if the character is ' ', assign null.
 
 			var ch = line[x], fieldType = null;
 			var Actor = actorChars[ch];
 			
-			//use if and else to handle the three cases
 			if (Actor)
 			{
 				this.actors.push(new Actor(new Vector (x,y), ch));
@@ -71,10 +69,9 @@ function Level(plan) {
 			else if (ch == "!")
 				fieldType = "lava";
 
-			// "Push" the fieldType, which is a string, onto the gridLine array (at the end)
 			gridLine.push(fieldType);
 		}
-		//push the entire row onto the array of rows
+		
 		this.grid.push(gridLine);
 	}
 
@@ -96,12 +93,12 @@ function Vector(x, y) {
 	this.x = x; this.y = y;
 }
 
-//vector arithmetic: v_1 + v_2 = <a,b>+<c,d> = <a+c,b+d>
+
 Vector.prototype.plus = function(other) {
 	return new Vector(this.x + other.x, this.y + other.y);
 };
 
-//vector arithmetic: v_1 * factor = <a,b>*factor = <a*factor,b*factor>
+
 Vector.prototype.times = function(factor) {
 	return new Vector(this.x * factor, this.y * factor);
 };
@@ -115,7 +112,8 @@ function Player(pos) {
 }
 Player.prototype.type = "player";
 
-//also the collectiable 'coin' has a wobble feature to it
+
+//collectiable 'coin' has a wobble feature to it as well as size and position
 function Coin(pos) { 
    this.basePos = this.pos = pos.plus(new Vector(0.2, 0.1)); 
    this.size = new Vector(0.4, 0.4); 
@@ -123,7 +121,8 @@ function Coin(pos) {
 } 
 Coin.prototype.type = "coin"; 
 
-//the pickup has similar attributes, just defined differently later on
+
+//the gravity pickup has similar attributes, just defined to do something later
 function PickUp(pos) { 
 	
 	this.basePos = this.pos = pos.plus(new Vector(0.2, 0.1)); 
@@ -132,7 +131,8 @@ function PickUp(pos) {
 } 
 PickUp.prototype.type = "pickUp"; 
 
-//this is the stuff that kills you. the lava. has a position size, and speed for certain other lava pieces
+
+//this is the stuff that kills you. the lava. has a position. a size and speed are for certain other lava pieces
 function Lava(pos, ch){
 	
 	this.pos = pos;
@@ -237,11 +237,10 @@ function DOMDisplay(parent, level) {
 	//keeps track of actors
 	this.actorLayer = null;
 
-	//update the world based on player position
 	this.drawFrame();
 }
 
-//scale of the game itself
+
 var scale = 30;
 
 
@@ -279,25 +278,29 @@ DOMDisplay.prototype.drawActors = function() {
 };
 
 DOMDisplay.prototype.drawFrame = function() {
+	
 	if (this.actorLayer)
 		this.wrap.removeChild(this.actorLayer);
 	this.actorLayer = this.wrap.appendChild(this.drawActors());
 	this.wrap.className = 'game ' + (this.level.status || '') + ' ' + (this.level.playerStatus);
 	this.scrollPlayerIntoView();
+
 };
 
+//keeps the player within the screen by a set amount
 DOMDisplay.prototype.scrollPlayerIntoView = function() {
 	var width = this.wrap.clientWidth;
 	var height = this.wrap.clientHeight;
 
-	//want to keep player at least 1/3 away from side of screen
+	//keeps player at least 1/3 away from side of screen
 	var margin = width / 3;
 
 	var left = this.wrap.scrollLeft, right = left + width;
 	var top = this.wrap.scrollTop, bottom = top + height;
 
 	var player = this.level.player;
-	//change coordinates from the source to our scaled.
+	
+	//change coordinates from the source to the scale
 	var center = player.pos.plus(player.size.times(0.5))
 				 .times(scale);
 
@@ -311,12 +314,14 @@ DOMDisplay.prototype.scrollPlayerIntoView = function() {
 		this.wrap.scrollTop = center.y + margin - height;
 };
 
+//clears the DOM
 DOMDisplay.prototype.clear = function(){
 
 	this.wrap.parentNode.removeChild(this.wrap);
 }
 
-
+//checks for an obstacle and returns it. the bottom of the screen counts as lava 
+//and each of the sides and top will be counted as walls
 Level.prototype.obstacleAt = function(pos, size)
 {
 	
@@ -339,39 +344,40 @@ Level.prototype.obstacleAt = function(pos, size)
 			
 			if(fieldType)
 			{
-				//console.log(fieldType);
 				return fieldType;
 			}
 		}
 	}
 };
 
+//loop over each actor in our actors list and compare the  
+//boundary boxes for overlaps. 
 Level.prototype.actorAt = function(actor) { 
-	// Loop over each actor in our actors list and compare the  
-	// boundary boxes for overlaps. 
+	
+
     for (var i = 0; i < this.actors.length; i++) { 
+		
 		var other = this.actors[i]; 
-    // if the other actor isn't the acting actor 
+		
 		if (other != actor && 
 			actor.pos.x + actor.size.x > other.pos.x && 
 			actor.pos.x < other.pos.x + other.size.x && 
 			actor.pos.y + actor.size.y > other.pos.y && 
 			actor.pos.y < other.pos.y + other.size.y) 
-    // check if the boundaries overlap by comparing all sides for 
-    // overlap and return the other actor if found 
+
 		return other; 
     } 
 }; 
 
 
 
-// Update simulation each step based on keys & step size
+//update simulation each step based on keys and step size
 Level.prototype.animate = function(step, keys) {
 
 	if(this.status != null)
 		this.finishDelay -= step;
 	
-	// Ensure each is maximum 100 milliseconds 
+	//ensure each is maximum 100 milliseconds 
 	while (step > 0) {
 		var thisStep = Math.min(step, maxStep);
 
@@ -384,6 +390,8 @@ Level.prototype.animate = function(step, keys) {
 	}
 };
 
+
+//this is where the lava will be getting it's movement
 Lava.prototype.act = function(step, level)
 {
 	var newPos = this.pos.plus(this.speed.times(step));
@@ -396,6 +404,8 @@ Lava.prototype.act = function(step, level)
 		this.speed = this.speed.times(-1);
 };
 
+
+//bouncing wall gets it's movement
 Wall2.prototype.act = function(step, level)
 {
 	var newPos = this.pos.plus(this.speed.times(step));
@@ -410,14 +420,17 @@ Wall2.prototype.act = function(step, level)
 var maxStep = 0.05;
 
 var wobbleSpeed = 8, wobbleDist = 0.07; 
- 
- 
+
+
+//collectible wobble movement
 Coin.prototype.act = function(step) { 
 	this.wobble += step * wobbleSpeed; 
 	var wobblePos = Math.sin(this.wobble) * wobbleDist; 
 	this.pos = this.basePos.plus(new Vector(0, wobblePos)); 
 }; 
 
+
+//gravity pickup wobble movement
 PickUp.prototype.act = function(step) {
 
 	this.wobble += step * wobbleSpeed; 
@@ -425,6 +438,8 @@ PickUp.prototype.act = function(step) {
 	this.pos = this.basePos.plus(new Vector(wobblePos, 0)); 
 }; 
 
+
+//the tooltips don't really have any acting to do, because they need to be static
 ArrowTut.prototype.act = function(step) {
 
 };
@@ -453,12 +468,18 @@ Patience.prototype.act = function(step) {
 
 };
 
+
+//player movement variables
 var maxStep = 0.05;
 
 var playerXSpeed = 8;
 
 
+//function for players X movement. speed.x starts at 0 then checks for key presses
+//the level.playerStatus is for defining the status for cycling through the gifs in the css
+//also has to check for if the player touches an obstacle
 Player.prototype.moveX = function(step, level, keys) {
+	
 	this.speed.x = 0;
 	if (keys.left)
 	{
@@ -490,6 +511,8 @@ Player.prototype.moveX = function(step, level, keys) {
 var gravity = 25;
 var jumpSpeed = 15;
 
+//handles the jumping and gif cycles and also when the player hits something in the air
+//also handles the bouncing wall actor. it will shoot up the player by adding speed.y to itself and to the jumpspeed
 Player.prototype.moveY = function(step, level, keys) {
 	
 	this.speed.y += step * gravity;
@@ -536,15 +559,15 @@ Player.prototype.moveY = function(step, level, keys) {
 	
 };
 
+//players movement for both X and Y and defines a shrink animation
 Player.prototype.act = function(step, level, keys) { 
 	this.moveX(step, level, keys); 
 	this.moveY(step, level, keys); 
  
- 
 	var otherActor = level.actorAt(this); 
 	if (otherActor) 
 		level.playerTouched(otherActor.type, otherActor);
-
+	
 	if(level.status == 'lost')
 	{
 		this.pos.y += step;
@@ -552,8 +575,10 @@ Player.prototype.act = function(step, level, keys) {
 	}
 }; 
  
+//checks for what the player touched. if it's lava, the player dies and the status is set to lost.
+//if it's a collectible, it disappears. if you collect them all, then the status is set to won and the level advances
+//else if it's a gravity pickup, does a setTimeout for gravity being reduced for 5 seconds.
 Level.prototype.playerTouched = function(type, actor) {
-	
 	
 	if(type == 'lava' && this.status == null)
 	{
@@ -593,25 +618,20 @@ Level.prototype.playerTouched = function(type, actor) {
 
 
 
-// Arrow key codes for readibility
+//arrow key codes
 var arrowCodes = {37: "left", 38: "up", 39: "right"};
 
-// Translate the codes pressed from a key event
+//translate the codes pressed from a key event
 function trackKeys(codes) {
-  var pressed = Object.create(null);
 
-  // alters the current "pressed" array which is returned from this function. 
-  // The "pressed" variable persists even after this function terminates
-  // That is why we needed to assign it using "Object.create()" as 
-  // otherwise it would be garbage collected
+	var pressed = Object.create(null);
+
 
 function handler(event) {
 	if (codes.hasOwnProperty(event.keyCode)) {
-      // If the event is keydown, set down to true. Else set to false.
+
 		var down = event.type == "keydown";
 		pressed[codes[event.keyCode]] = down;
-      // We don't want the key press to scroll the browser window, 
-      // This stops the event from continuing to be processed
 		event.preventDefault();
     }
 }
@@ -620,15 +640,13 @@ function handler(event) {
 	return pressed;
 }
 
-// frameFunc is a function called each frame with the parameter "step"
-// step is the amount of time since the last call used for animation
+
 function runAnimation(frameFunc) {
 	var lastTime = null;
 	function frame(time) {
     var stop = false;
     if (lastTime != null) {
-      // Set a maximum frame step of 100 milliseconds to prevent
-      // having big jumps
+
 		var timeStep = Math.min(time - lastTime, 100) / 1000;
 		stop = frameFunc(timeStep) === false;
     }
@@ -639,16 +657,15 @@ function runAnimation(frameFunc) {
   requestAnimationFrame(frame);
 }
 
-// This assigns the array that will be updated anytime the player
-// presses an arrow key. We can access it from anywhere.
+//assigns the array that will be updated anytime the player presses an arrow key
 var arrows = trackKeys(arrowCodes);
 
-// Organize a single level and begin animation
+//this is going to run a single level and clear it when finished
 function runLevel(level, Display, andThen) {
 	var display = new Display(document.body, level);
 
 	runAnimation(function(step) {
-    // Allow the viewer to scroll the level
+    
 		level.animate(step, arrows);
 		display.drawFrame(step);
 		
@@ -662,10 +679,10 @@ function runLevel(level, Display, andThen) {
 	});
 }
 
+
 function runGame(plans, Display) {
   function startLevel(n) {
-    // Create a new level using the nth element of array plans
-    // Pass in a reference to Display function, DOMDisplay (in index.html).
+    //create a new level using the nth element of array plans
     runLevel(new Level(plans[n]), Display, function(status) {
 		if(status == 'lost')
 			startLevel(n);
